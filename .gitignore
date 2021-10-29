@@ -9,4 +9,4 @@ auth.yml
 telegram.yml
 config.yml
 executed_trades.json
-executed_sells_trades.json
+executed_sales.json
