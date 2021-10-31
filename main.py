@@ -189,7 +189,7 @@ def sell():
                         if volume > 1:
                             volume= int(volume)
                         if not told_ya:    
-                            sendmsg("[WSB] Volume: {}".format(volume,5))
+                            sendmsg("\[WSB\] Volume: {}".format(volume,5))
                         last_price = get_price(symbol)
 
                         # update stop loss and take profit values if threshold is reached
@@ -206,7 +206,7 @@ def sell():
                             not_sold_orders.append(coin)
                             flag_update = True
 
-                            threading.Thread(target=sendSpam, args=(symbol, f'Updated tp: {round(new_tp, 3)} and sl: {round(new_sl, 3)} for: {symbol}')).start()
+                            threading.Thread(target=sendSpam, args=(symbol, f'\[WSB\] Updated tp: {round(new_tp, 3)} and sl: {round(new_sl, 3)} for: {symbol}')).start()
                         # close trade if tsl is reached or trail option is not enabled
                         elif float(last_price) < coin_sl or float(last_price) > coin_tp:
                             try:
@@ -216,7 +216,7 @@ def sell():
                                     sell = client.create_order(symbol = symbol, side = 'SELL', type = 'MARKET', quantity = volume, recvWindow = "10000")
 
 
-                                sendmsg(f"[WSB] Sold {symbol} at {(float(last_price) - stored_price) / float(stored_price)*100}!")
+                                sendmsg(f"\[WSB\] Sold {symbol} at {(float(last_price) - stored_price) / float(stored_price)*100}!")
                                 killSpam(symbol)
                                 flag_update = True
                                 # remove order from json file by not adding it
@@ -251,7 +251,7 @@ def sell():
                             not_sold_orders.append(coin)
                         if flag_update: save_json(executed_trades_file, not_sold_orders)
                     else:
-                        sendmsg("[WSB] Volume less than 0, retrying...")
+                        sendmsg("\[WSB\] Volume less than 0, retrying...")
                         time.sleep(0.5)
         except Exception as exception:       
             wrong = traceback.format_exc(limit=None, chain=True)
@@ -271,7 +271,7 @@ def place_Order_On_Time(time_till_live, pair, threads):
         price = order['price']
         order['tp'] = price + (price*tp /100)
         order['sl'] = price - (price*sl /100)
-        sendmsg(f'[WSB] Bought {amount} {pair} at {price} each')
+        sendmsg(f'\[WSB\] Bought {amount} {pair} at {price} each')
         executed_queque.append(order)
     except Exception as exception:       
         wrong = traceback.format_exc(limit=None, chain=True)
@@ -294,23 +294,24 @@ def get_new_coin():
 def main():
     while True:
         coin = get_new_coin()
-        b = coin.replace(b'\x1b\x5b\x30\x6d\x0a', b'')
-        result = b.decode()
-        pair = result + "USDT"
-        time_And_Pair = [datetime.utcnow(), [pair]]
+        if coin != "":
+            b = coin.replace(b'\x1b\x5b\x30\x6d\x0a', b'')
+            result = b.decode()
+            pair = result + "USDT"
+            time_And_Pair = [datetime.utcnow(), [pair]]
 
-        threading.Thread(target=place_Order_On_Time, args=(time_And_Pair[0], pair, threading.active_count() + 1)).start()
-        sendmsg(f'[WSB] Buying {time_And_Pair[1][0]}...')
+            threading.Thread(target=place_Order_On_Time, args=(time_And_Pair[0], pair, threading.active_count() + 1)).start()
+            sendmsg(f'\[WSB\] Buying {time_And_Pair[1][0]}...')
 
-        threading.Thread(target=sell, args=()).start()
-        threading.Thread(target=executed_orders, args=()).start()
-        threading.Thread(target=sendSpam, args=("ping", f'[WSB] Current delay to Binance: {ping_binance()}&disable_notification=true')).start()
+            threading.Thread(target=sell, args=()).start()
+            threading.Thread(target=executed_orders, args=()).start()
+            threading.Thread(target=sendSpam, args=("ping", f'\[WSB\] Current delay to Binance: {ping_binance()}&disable_notification=true')).start()
 
 if __name__ == '__main__':
     try:
         if not test_mode:
-            sendmsg('[WSB] Running in live mode.')
-        sendmsg(f'[WSB] Delay to Binance: {ping_binance()}')
+            sendmsg('\[WSB\] Running in live mode.')
+        sendmsg(f'\[WSB\] Delay to Binance: {ping_binance()}')
         main()
     except Exception as exception:
         wrong = traceback.format_exc(limit=None, chain=True)
