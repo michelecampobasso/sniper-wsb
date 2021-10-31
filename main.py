@@ -327,14 +327,14 @@ def main():
             if pair is None:
                 send_msg(f'--WSB-- Coin '+new_coin+' doesn\'t have USDT nor BTC as counterpart. It will be skipped.')
             else:
-                # threading.Thread(target=place_order_at_time, args=(pair, threading.active_count() + 1)).start()
+                threading.Thread(target=place_order_at_time, args=(pair, threading.active_count() + 1)).start()
                 send_msg(f'--WSB-- Buying {pair}...')
 
-                # threading.Thread(target=sell, args=()).start()
-                # threading.Thread(target=executed_orders, args=()).start()
+                threading.Thread(target=sell, args=()).start()
+                threading.Thread(target=executed_orders, args=()).start()
                 threading.Thread(target=send_spam, args=("ping", f'--WSB-- Delay to Binance: {ping_binance()*1000:.1f}ms.&disable_notification=true')).start()
 
-if __name__ == '__main__':
+if __name__ == '__main__':  
     try:
         if not test_mode:
             send_msg('--WSB-- Running in live mode.')
